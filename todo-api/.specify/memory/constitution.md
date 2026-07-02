@@ -1,50 +1,138 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+SYNC IMPACT REPORT
+==================
+Version change: [TEMPLATE] → 1.0.0
+Ratification: Initial adoption 2026-07-02
+
+Modified principles: N/A (initial ratification)
+
+Added sections:
+  - Core Principles (12 principles)
+  - Infrastructure & Operations
+  - Development Standards
+  - Governance
+
+Removed sections: N/A (initial ratification)
+
+Templates reviewed:
+  ✅ .specify/templates/plan-template.md — Constitution Check section present; aligns with principles
+  ✅ .specify/templates/spec-template.md — No principle-breaking constraints found
+  ✅ .specify/templates/tasks-template.md — Tests noted as OPTIONAL; aligns with Principle 7
+  ✅ No commands/*.md files found to review
+
+Follow-up TODOs: None — all placeholders resolved.
+-->
+
+# TodoApp API Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Python (FastAPI) Backend
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+The backend MUST be implemented in Python using FastAPI as the web framework.
+No alternative backend languages or frameworks may be introduced without amending this constitution.
+FastAPI is chosen for its performance, built-in OpenAPI support, and idiomatic async Python.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. Simple, Clean, and Modular Architecture
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+The codebase MUST be organized into clearly separated modules (e.g., routes, models, services).
+Each module MUST have a single, well-defined responsibility.
+Horizontal layers (e.g., adding a new endpoint) MUST not require changes across unrelated modules.
+Over-engineering, premature abstractions, and speculative structure are prohibited.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Clean Code and Meaningful Naming
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+All identifiers (variables, functions, classes, modules) MUST be named to communicate intent without
+requiring comments to explain the what.
+Functions MUST be short and do one thing. Long functions MUST be refactored.
+Code MUST read like prose — a future maintainer MUST understand a module's purpose within seconds of
+opening it.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### IV. RESTful API Design
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+All external interfaces MUST be exposed as RESTful HTTP endpoints.
+Resources MUST be named as nouns (e.g., `/todos`, `/users`). Actions MUST be expressed via HTTP
+verbs (GET, POST, PUT, PATCH, DELETE).
+HTTP status codes MUST be used semantically (200 OK, 201 Created, 404 Not Found, 422 Unprocessable
+Entity, etc.).
+API responses MUST be JSON.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### V. Minimal Dependencies
+
+Third-party packages MUST only be added when they provide clear, non-trivial value that cannot be
+achieved with the standard library or FastAPI's built-ins in a reasonable number of lines.
+Every dependency added MUST be justified. Unused dependencies MUST be removed.
+Prefer well-maintained packages with small transitive dependency footprints.
+
+## Infrastructure & Operations
+
+### VI. Simple Docker for Local Development Only
+
+Docker configuration MUST be limited to local development use (e.g., `docker-compose.yml` for
+spinning up the app and any required services locally).
+Multi-stage builds, production Docker hardening, and advanced Docker optimizations MUST NOT be
+introduced unless explicitly requested.
+The Docker setup MUST remain minimal and readable — a developer MUST be able to understand it in
+under five minutes.
+
+### VII. No Tests Unless Explicitly Requested
+
+Unit tests, integration tests, and end-to-end tests MUST NOT be written unless explicitly requested.
+When tests are requested, they MUST be scoped to the request — no speculative test coverage.
+This principle exists to avoid maintenance burden on a rapidly evolving codebase during early
+development.
+
+### VIII. No CI/CD Unless Explicitly Requested
+
+CI/CD pipelines (GitHub Actions, GitLab CI, etc.) MUST NOT be configured unless explicitly
+requested.
+Build automation, deployment scripts, and release workflows are out of scope until requested.
+
+### IX. Environment Variables for Configuration
+
+All configuration that varies between environments (database URLs, secret keys, ports, feature flags)
+MUST be stored in environment variables.
+A `.env.example` file MUST document all required variables with placeholder values.
+No hardcoded configuration values are permitted in source code.
+
+### X. No Secrets or Credentials in Version Control
+
+Secrets, credentials, API keys, tokens, and passwords MUST NEVER be committed to the repository.
+`.env` files containing real values MUST be listed in `.gitignore`.
+If a secret is accidentally committed, it MUST be treated as compromised and rotated immediately.
+
+## Development Standards
+
+### XI. Concise Documentation
+
+Documentation MUST cover setup and usage and nothing more unless explicitly requested.
+A `README.md` MUST include: prerequisites, local setup steps, how to run the app, and how to use the
+API.
+Documentation MUST be kept in sync with the code — stale documentation is worse than no
+documentation.
+
+### XII. Readability Over Cleverness
+
+When two implementations achieve the same result, the more readable one MUST be chosen.
+Clever one-liners, obscure language features, and non-obvious optimizations are prohibited unless
+they address a measured performance problem.
+Three clear lines beat one cryptic line. Maintainability is a feature.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes all other practices, conventions, and tooling defaults in this project.
+Any deviation from these principles MUST be documented and justified in the relevant PR description.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Amendment procedure**: Amendments require updating this file with a version bump, a rationale in
+the Sync Impact Report comment, and consensus between active contributors. Amendments MUST NOT
+silently remove principles — removal requires explicit justification.
+
+**Versioning policy**:
+- MAJOR: Backward-incompatible governance changes, principle removal, or redefinition.
+- MINOR: New principle added or materially expanded guidance.
+- PATCH: Clarifications, wording fixes, non-semantic refinements.
+
+**Compliance**: All code reviews MUST verify that changes comply with the active principles.
+Complexity that violates a principle MUST be flagged for justification before merge.
+
+**Version**: 1.0.0 | **Ratified**: 2026-07-02 | **Last Amended**: 2026-07-02
