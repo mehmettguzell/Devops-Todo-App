@@ -24,7 +24,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: backend
+        working-directory: todo-api/backend
 
     env:
       POSTGRES_HOST: localhost
@@ -42,7 +42,7 @@ jobs:
       - name: setup python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
-          python-version-file: ".python-version"
+          python-version-file: "todo-api/.python-version"
 
       - name: install dependencies
         run: uv sync --frozen
