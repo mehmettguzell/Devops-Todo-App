@@ -7,9 +7,17 @@ interface TaskListProps {
   onRevive?: (taskId: number) => void;
   onToggleExempt?: (taskId: number, exempt: boolean) => void;
   onSetDueDate?: (taskId: number, dueDate: string | null) => void;
+  onDelete?: (taskId: number) => void;
 }
 
-function TaskList({ tasks, onComplete, onRevive, onToggleExempt, onSetDueDate }: TaskListProps) {
+function TaskList({
+  tasks,
+  onComplete,
+  onRevive,
+  onToggleExempt,
+  onSetDueDate,
+  onDelete,
+}: TaskListProps) {
   return (
     <ul className="task-list">
       {tasks.map((task) => (
@@ -20,6 +28,7 @@ function TaskList({ tasks, onComplete, onRevive, onToggleExempt, onSetDueDate }:
           onRevive={onRevive}
           onToggleExempt={onToggleExempt}
           onSetDueDate={onSetDueDate}
+          onDelete={onDelete}
         />
       ))}
     </ul>

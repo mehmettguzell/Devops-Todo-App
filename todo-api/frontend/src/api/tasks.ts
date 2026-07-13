@@ -44,6 +44,10 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     throw new ApiError(`Request failed with status ${response.status}`);
   }
 
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
   return response.json() as Promise<T>;
 }
 
@@ -71,6 +75,10 @@ export function completeTask(taskId: number): Promise<Task> {
 
 export function reviveTask(taskId: number): Promise<Task> {
   return request<Task>(`/tasks/${taskId}/revive`, { method: "PATCH" });
+}
+
+export function deleteTask(taskId: number): Promise<void> {
+  return request<void>(`/tasks/${taskId}`, { method: "DELETE" });
 }
 
 export interface TaskFadingUpdateInput {

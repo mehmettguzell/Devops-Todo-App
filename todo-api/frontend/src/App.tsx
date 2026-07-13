@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { completeTask, listTasks, reviveTask, updateTaskFading, type Task } from "./api/tasks";
+import {
+  completeTask,
+  deleteTask,
+  listTasks,
+  reviveTask,
+  updateTaskFading,
+  type Task,
+} from "./api/tasks";
 import AddTaskModal from "./components/AddTaskModal";
 import DailyCapacityPanel from "./components/DailyCapacityPanel";
 import EmptyState from "./components/EmptyState";
@@ -73,6 +80,13 @@ function App() {
   async function handleSetDueDate(taskId: number, dueDate: string | null) {
     const updated = await updateTaskFading(taskId, { due_date: dueDate });
     setActiveTasks((tasks) => tasks.map((task) => (task.id === taskId ? updated : task)));
+  }
+
+  async function handleDelete(taskId: number) {
+    await deleteTask(taskId);
+    setActiveTasks((tasks) => tasks.filter((task) => task.id !== taskId));
+    setCompletedTasks((tasks) => tasks.filter((task) => task.id !== taskId));
+    setArchivedTasks((tasks) => tasks.filter((task) => task.id !== taskId));
   }
 
   function handleRecommendationSubmit(request: RecommendationRequest) {
@@ -203,6 +217,7 @@ function App() {
                 onRevive={handleRevive}
                 onToggleExempt={handleToggleExempt}
                 onSetDueDate={handleSetDueDate}
+                onDelete={handleDelete}
               />
             )}
           </>
@@ -210,12 +225,12 @@ function App() {
           completedTasks.length === 0 ? (
             <EmptyState message="Nothing completed yet — finished tasks will show up here." />
           ) : (
-            <TaskList tasks={completedTasks} />
+            <TaskList tasks={completedTasks} onDelete={handleDelete} />
           )
         ) : archivedTasks.length === 0 ? (
           <EmptyState message="Nothing archived — neglected tasks will quietly land here." />
         ) : (
-          <TaskList tasks={archivedTasks} onRevive={handleRevive} />
+          <TaskList tasks={archivedTasks} onRevive={handleRevive} onDelete={handleDelete} />
         )}
       </div>
 
