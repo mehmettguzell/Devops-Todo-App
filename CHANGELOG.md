@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/mehmettguzell/Devops-Todo-App/compare/v0.3.0...v0.4.0) (2026-07-13)
+
+
+### Features
+
+* add crud methods and tests ([ccef756](https://github.com/mehmettguzell/Devops-Todo-App/commit/ccef75685491ff02fcf07ebcca52d4bfeb0cfa4f))
+
+
+### Bug Fixes
+
+* fix bug and delete workflow ([df6a368](https://github.com/mehmettguzell/Devops-Todo-App/commit/df6a3689862f0e13818736f4027b0532596b1cdb))
+
 ## [0.3.0](https://github.com/mehmettguzell/Devops-Todo-App/compare/v0.2.0...v0.3.0) (2026-07-13)
 
 
