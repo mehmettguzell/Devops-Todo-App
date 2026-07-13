@@ -1,0 +1,85 @@
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+networks:
+  backend-db:
+  backend-frontend:
+
+services:
+  todo-db:
+    image: postgres:15
+    container_name: todo-db
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+        reservations:
+          memory: 128m
+    networks:
+      - backend-db
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - todo_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  backend:
+    container_name: todo-backend
+    build:
+      context: ../backend
+    ports:
+      - "8000:8000"
+    networks:
+      - backend-db
+      - backend-frontend
+    environment:
+      POSTGRES_HOST: todo-db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'python -c "import sys, urllib.request; sys.exit(0 if urllib.request.urlopen(''http://localhost:8000/health/ready'').status == 200 else 1)"',
+        ]
+      interval: 30s
+      timeout: 3s
+      start_period: 5s
+      retries: 3
+    depends_on:
+      todo-db:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *default-logging
+
+  frontend:
+    container_name: todo-frontend
+    build:
+      context: ../frontend
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+    ports:
+      - "5173:80"
+    networks:
+      - backend-frontend
+    restart: unless-stopped
+    logging: *default-logging
+
+volumes:
+  todo_data:
