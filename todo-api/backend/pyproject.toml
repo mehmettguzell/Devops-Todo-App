@@ -5,4 +5,5 @@ description = "Bitir backend API"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi[standard]>=0.139.0",
+    "psycopg[binary]>=3.2",
 ]

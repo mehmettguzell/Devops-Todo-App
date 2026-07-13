@@ -17,7 +17,8 @@ def create_task(
             INSERT INTO tasks
                 (title, estimated_duration_minutes, energy_level, status, created_at,
                  last_touched_at, fading_exempt, due_date)
-            VALUES (?, ?, ?, 'active', ?, ?, 0, ?)
+            VALUES (%s, %s, %s, 'active', %s, %s, 0, %s)
+            RETURNING id
             """,
             (
                 title,
@@ -28,8 +29,9 @@ def create_task(
                 due_date.isoformat() if due_date else None,
             ),
         )
+        new_id = cursor.fetchone()["id"]
         conn.commit()
-        row = conn.execute("SELECT * FROM tasks WHERE id = ?", (cursor.lastrowid,)).fetchone()
+        row = conn.execute("SELECT * FROM tasks WHERE id = %s", (new_id,)).fetchone()
         return dict(row)
 
 
@@ -68,7 +70,7 @@ class TaskArchivedError(Exception):
 
 def complete_task(task_id: int) -> dict:
     with get_connection() as conn:
-        row = conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
+        row = conn.execute("SELECT * FROM tasks WHERE id = %s", (task_id,)).fetchone()
         if row is None:
             raise TaskNotFoundError(task_id)
         if row["status"] == "archived":
@@ -77,17 +79,17 @@ def complete_task(task_id: int) -> dict:
         if row["status"] in ("active", "faded"):
             completed_at = datetime.now(timezone.utc).isoformat()
             conn.execute(
-                "UPDATE tasks SET status = 'completed', completed_at = ? WHERE id = ?",
+                "UPDATE tasks SET status = 'completed', completed_at = %s WHERE id = %s",
                 (completed_at, task_id),
             )
             conn.commit()
-            row = conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
+            row = conn.execute("SELECT * FROM tasks WHERE id = %s", (task_id,)).fetchone()
 
         return dict(row)
 
 def delete_task(task_id: int) -> bool:
     with get_connection() as conn:
-        row = conn.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
-        if row.rowcount == 0:
+        cursor = conn.execute("DELETE FROM tasks WHERE id = %s", (task_id,))
+        if cursor.rowcount == 0:
             raise TaskNotFoundError(task_id)
         conn.commit()

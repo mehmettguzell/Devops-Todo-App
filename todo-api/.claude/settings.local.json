@@ -27,7 +27,12 @@
       "Bash(rm -f /tmp/bitir_test.db)",
       "Bash(python3 *)",
       "Bash(command -v sqlite3)",
-      "Bash(sqlite3 *)"
+      "Bash(sqlite3 *)",
+      "Bash(docker --version)",
+      "Bash(docker compose *)",
+      "Bash(curl -s http://localhost:8000/health/ready)",
+      "Bash(curl -s -X POST http://localhost:8000/tasks -H \"Content-Type: application/json\" -d '{\"title\":\"test task\",\"estimated_duration_minutes\":30,\"energy_level\":\"low\"}')",
+      "Bash(curl -s \"http://localhost:8000/tasks?status=active\")"
     ]
   }
 }

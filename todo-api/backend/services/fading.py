@@ -57,14 +57,14 @@ def apply_fading_transitions() -> None:
                 new_status = row["status"]
 
             if new_status != row["status"]:
-                conn.execute("UPDATE tasks SET status = ? WHERE id = ?", (new_status, row["id"]))
+                conn.execute("UPDATE tasks SET status = %s WHERE id = %s", (new_status, row["id"]))
 
         conn.commit()
 
 
 def revive_task(task_id: int) -> dict:
     with get_connection() as conn:
-        row = conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
+        row = conn.execute("SELECT * FROM tasks WHERE id = %s", (task_id,)).fetchone()
         if row is None:
             raise TaskNotFoundError(task_id)
         if row["status"] == "completed":
@@ -73,11 +73,11 @@ def revive_task(task_id: int) -> dict:
         if row["status"] != "active":
             now = datetime.now(timezone.utc).isoformat()
             conn.execute(
-                "UPDATE tasks SET status = 'active', last_touched_at = ? WHERE id = ?",
+                "UPDATE tasks SET status = 'active', last_touched_at = %s WHERE id = %s",
                 (now, task_id),
             )
             conn.commit()
-            row = conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
+            row = conn.execute("SELECT * FROM tasks WHERE id = %s", (task_id,)).fetchone()
 
         return dict(row)
 
@@ -89,7 +89,7 @@ def update_task_fading(
     due_date_set: bool,
 ) -> dict:
     with get_connection() as conn:
-        row = conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
+        row = conn.execute("SELECT * FROM tasks WHERE id = %s", (task_id,)).fetchone()
         if row is None:
             raise TaskNotFoundError(task_id)
 
@@ -115,11 +115,11 @@ def update_task_fading(
         conn.execute(
             """
             UPDATE tasks
-            SET fading_exempt = ?, due_date = ?, status = ?, last_touched_at = ?
-            WHERE id = ?
+            SET fading_exempt = %s, due_date = %s, status = %s, last_touched_at = %s
+            WHERE id = %s
             """,
             (new_fading_exempt, new_due_date, new_status, new_last_touched_at, task_id),
         )
         conn.commit()
-        row = conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
+        row = conn.execute("SELECT * FROM tasks WHERE id = %s", (task_id,)).fetchone()
         return dict(row)

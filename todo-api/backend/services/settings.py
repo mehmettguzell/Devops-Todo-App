@@ -21,7 +21,7 @@ def update_fading_settings(fade_threshold_days: int, archive_threshold_days: int
 
     with get_connection() as conn:
         conn.execute(
-            "UPDATE fading_settings SET fade_threshold_days = ?, archive_threshold_days = ? WHERE id = 1",
+            "UPDATE fading_settings SET fade_threshold_days = %s, archive_threshold_days = %s WHERE id = 1",
             (fade_threshold_days, archive_threshold_days),
         )
         conn.commit()

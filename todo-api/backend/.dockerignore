@@ -1,0 +1,44 @@
+# Python bytecode (compiled files)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Development and IDE settings
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Git and version control
+.git/
+.gitignore
+
+# Secrets and environment variables
+.env
+.env.*
+!.env.example
+secrets.json
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+tests/
+
+# Build and distribution
+build/
+dist/
+*.egg-info/
+
+# Docker files (unnecessary inside the container)
+Dockerfile
+docker-compose.yml
+.dockerignore
