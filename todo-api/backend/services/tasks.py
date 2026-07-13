@@ -68,6 +68,46 @@ class TaskArchivedError(Exception):
     pass
 
 
+class TaskNotCompletedError(Exception):
+    pass
+
+
+def get_task(task_id: int) -> dict:
+    with get_connection() as conn:
+        row = conn.execute("SELECT * FROM tasks WHERE id = %s", (task_id,)).fetchone()
+        if row is None:
+            raise TaskNotFoundError(task_id)
+        return dict(row)
+
+
+def update_task(
+    task_id: int,
+    title: str | None = None,
+    estimated_duration_minutes: int | None = None,
+    energy_level: EnergyLevel | None = None,
+) -> dict:
+    with get_connection() as conn:
+        row = conn.execute("SELECT * FROM tasks WHERE id = %s", (task_id,)).fetchone()
+        if row is None:
+            raise TaskNotFoundError(task_id)
+
+        new_title = row["title"] if title is None else title
+        new_duration = (
+            row["estimated_duration_minutes"]
+            if estimated_duration_minutes is None
+            else estimated_duration_minutes
+        )
+        new_energy = row["energy_level"] if energy_level is None else energy_level.value
+
+        conn.execute(
+            "UPDATE tasks SET title = %s, estimated_duration_minutes = %s, energy_level = %s WHERE id = %s",
+            (new_title, new_duration, new_energy, task_id),
+        )
+        conn.commit()
+        row = conn.execute("SELECT * FROM tasks WHERE id = %s", (task_id,)).fetchone()
+        return dict(row)
+
+
 def complete_task(task_id: int) -> dict:
     with get_connection() as conn:
         row = conn.execute("SELECT * FROM tasks WHERE id = %s", (task_id,)).fetchone()
@@ -86,6 +126,24 @@ def complete_task(task_id: int) -> dict:
             row = conn.execute("SELECT * FROM tasks WHERE id = %s", (task_id,)).fetchone()
 
         return dict(row)
+
+def uncomplete_task(task_id: int) -> dict:
+    with get_connection() as conn:
+        row = conn.execute("SELECT * FROM tasks WHERE id = %s", (task_id,)).fetchone()
+        if row is None:
+            raise TaskNotFoundError(task_id)
+        if row["status"] != "completed":
+            raise TaskNotCompletedError(task_id)
+
+        now = datetime.now(timezone.utc).isoformat()
+        conn.execute(
+            "UPDATE tasks SET status = 'active', completed_at = NULL, last_touched_at = %s WHERE id = %s",
+            (now, task_id),
+        )
+        conn.commit()
+        row = conn.execute("SELECT * FROM tasks WHERE id = %s", (task_id,)).fetchone()
+        return dict(row)
+
 
 def delete_task(task_id: int) -> bool:
     with get_connection() as conn:

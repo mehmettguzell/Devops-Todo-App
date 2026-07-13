@@ -32,6 +32,28 @@ class TaskCreate(BaseModel):
         return stripped
 
 
+class TaskUpdate(BaseModel):
+    title: str | None = None
+    estimated_duration_minutes: int | None = Field(default=None, gt=0)
+    energy_level: EnergyLevel | None = None
+
+    @field_validator("title")
+    @classmethod
+    def title_must_not_be_blank(cls, value: str | None) -> str | None:
+        if value is None:
+            return value
+        stripped = value.strip()
+        if not stripped:
+            raise ValueError("title must not be empty")
+        return stripped
+
+    @model_validator(mode="after")
+    def at_least_one_field_present(self) -> "TaskUpdate":
+        if self.title is None and self.estimated_duration_minutes is None and self.energy_level is None:
+            raise ValueError("at least one of title, estimated_duration_minutes or energy_level must be provided")
+        return self
+
+
 class TaskFadingUpdate(BaseModel):
     fading_exempt: bool | None = None
     due_date: date | None = None

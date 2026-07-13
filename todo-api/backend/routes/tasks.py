@@ -2,7 +2,7 @@ from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from model.models import Task, TaskCreate, TaskFadingUpdate
+from model.models import Task, TaskCreate, TaskFadingUpdate, TaskUpdate
 from services import tasks as tasks_service
 from services.fading import (
     TaskCompletedError,
@@ -38,6 +38,29 @@ def create_task(payload: TaskCreate) -> Task:
     return Task(**row)
 
 
+@router.get("/{task_id}", response_model=Task)
+def get_task(task_id: int) -> Task:
+    try:
+        row = tasks_service.get_task(task_id)
+    except tasks_service.TaskNotFoundError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+    return Task(**row)
+
+
+@router.patch("/{task_id}", response_model=Task)
+def update_task(task_id: int, payload: TaskUpdate) -> Task:
+    try:
+        row = tasks_service.update_task(
+            task_id,
+            title=payload.title,
+            estimated_duration_minutes=payload.estimated_duration_minutes,
+            energy_level=payload.energy_level,
+        )
+    except tasks_service.TaskNotFoundError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+    return Task(**row)
+
+
 @router.patch("/{task_id}/complete", response_model=Task)
 def complete_task(task_id: int) -> Task:
     try:
@@ -48,6 +71,20 @@ def complete_task(task_id: int) -> Task:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Task is archived; revive it before completing",
+        )
+    return Task(**row)
+
+
+@router.patch("/{task_id}/uncomplete", response_model=Task)
+def uncomplete_task(task_id: int) -> Task:
+    try:
+        row = tasks_service.uncomplete_task(task_id)
+    except tasks_service.TaskNotFoundError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+    except tasks_service.TaskNotCompletedError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Task is not completed; uncomplete does not apply",
         )
     return Task(**row)
 
