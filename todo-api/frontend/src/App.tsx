@@ -1,11 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import { completeTask, listTasks, reviveTask, updateTaskFading, type Task } from "./api/tasks";
 import AddTaskModal from "./components/AddTaskModal";
+import DailyCapacityPanel from "./components/DailyCapacityPanel";
 import EmptyState from "./components/EmptyState";
 import FadingSettingsModal from "./components/FadingSettingsModal";
+import ProgressPanel from "./components/ProgressPanel";
 import RecommendationCard from "./components/RecommendationCard";
 import RecommendationPanel from "./components/RecommendationPanel";
 import TaskList from "./components/TaskList";
+import {
+  getStoredBudgetMinutes,
+  remainingCapacityMinutes,
+  setStoredBudgetMinutes,
+  sumDurationMinutes,
+  todayKey,
+  toLocalDateKey,
+} from "./lib/dailyCapacity";
 import { isSuitable, pickRecommendation, type RecommendationRequest } from "./lib/recommendation";
 
 type View = "active" | "completed" | "archive";
@@ -22,6 +32,9 @@ function App() {
     null,
   );
   const [declinedTaskIds, setDeclinedTaskIds] = useState<Set<number>>(new Set());
+  const [budgetMinutes, setBudgetMinutes] = useState<number | null>(() =>
+    getStoredBudgetMinutes(todayKey()),
+  );
 
   useEffect(() => {
     listTasks("active").then(setActiveTasks);
@@ -82,11 +95,30 @@ function App() {
     setDeclinedTaskIds(new Set());
   }
 
-  const recommendedTask = recommendationRequest
-    ? pickRecommendation(activeTasks, recommendationRequest, declinedTaskIds)
+  function handleBudgetSet(minutes: number) {
+    setStoredBudgetMinutes(todayKey(), minutes);
+    setBudgetMinutes(minutes);
+  }
+
+  const completedTodayMinutes = sumDurationMinutes(
+    completedTasks.filter((task) => task.completed_at && toLocalDateKey(task.completed_at) === todayKey()),
+  );
+  const remainingMinutes =
+    budgetMinutes !== null ? remainingCapacityMinutes(budgetMinutes, completedTodayMinutes) : 0;
+  const plannedMinutes = sumDurationMinutes(activeTasks);
+  const isOverPlanned = budgetMinutes !== null && plannedMinutes > budgetMinutes;
+
+  const effectiveRecommendationRequest: RecommendationRequest | null = recommendationRequest
+    ? budgetMinutes !== null
+      ? { ...recommendationRequest, minutes: Math.min(recommendationRequest.minutes, remainingMinutes) }
+      : recommendationRequest
+    : null;
+
+  const recommendedTask = effectiveRecommendationRequest
+    ? pickRecommendation(activeTasks, effectiveRecommendationRequest, declinedTaskIds)
     : undefined;
-  const hasAnySuitableTask = recommendationRequest
-    ? activeTasks.some((task) => isSuitable(task, recommendationRequest))
+  const hasAnySuitableTask = effectiveRecommendationRequest
+    ? activeTasks.some((task) => isSuitable(task, effectiveRecommendationRequest))
     : false;
 
   return (
@@ -130,6 +162,14 @@ function App() {
       <div className="page-content">
         {view === "active" ? (
           <>
+            <DailyCapacityPanel
+              budgetMinutes={budgetMinutes}
+              remainingMinutes={remainingMinutes}
+              isOverPlanned={isOverPlanned}
+              onBudgetSet={handleBudgetSet}
+            />
+            <ProgressPanel completedTasks={completedTasks} />
+
             <div className="recommendation-area">
               {recommendedTask ? (
                 <RecommendationCard
