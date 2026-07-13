@@ -10,4 +10,3 @@ See [todo-api/README.md](todo-api/README.md) for the application itself (setup, 
 | [release-please.yml](.github/workflows/release-please.yml) | push to `main` | Maintains a release PR from Conventional Commits; merging it cuts a GitHub Release + `vX.Y.Z` tag |
 | [build-push.yml](.github/workflows/build-push.yml) | tag push `v*` | Builds and pushes changed backend/frontend images to GHCR |
 | [close-stale-issues-and-prs.yml](.github/workflows/close-stale-issues-and-prs.yml) | daily cron | Labels and closes stale issues/PRs |
-| [export-timing-data.yml](.github/workflows/export-timing-data.yml) | `workflow_run` completed (test, build-push) | Summarizes job durations; OTLP export point for later |
