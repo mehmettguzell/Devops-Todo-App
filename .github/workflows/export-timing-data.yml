@@ -1,0 +1,42 @@
+name: export timing data
+
+on:
+  workflow_run:
+    workflows:
+      - Test
+      - build and registry push
+    types:
+      - completed
+
+permissions:
+  actions: read
+
+jobs:
+  export-timing-data:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: summarize run timing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
+        run: |
+          echo "## Timing for \`${WORKFLOW_NAME}\` (run ${RUN_ID})" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| job | conclusion | duration (s) |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
+
+          gh api "repos/${{ github.repository }}/actions/runs/${RUN_ID}/jobs" \
+            --jq '.jobs[] | [.name, .conclusion, ((.completed_at | fromdateiso8601) - (.started_at | fromdateiso8601))] | @tsv' \
+            | while IFS=$'\t' read -r name conclusion duration; do
+                echo "| ${name} | ${conclusion} | ${duration} |" >> "$GITHUB_STEP_SUMMARY"
+              done
+
+          # Once an OTLP backend is chosen, export each job as a span here instead of/alongside
+          # the step summary above, e.g.:
+          #
+          #   - uses: inception-health/otel-upload-artifact-action@<pin>
+          #     with:
+          #       otlpEndpoint: ${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}
+          #       otlpHeaders: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
+          #       runId: ${{ env.RUN_ID }}
