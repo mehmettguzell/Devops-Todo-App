@@ -78,3 +78,13 @@ def update_fading(task_id: int, payload: TaskFadingUpdate) -> Task:
     except tasks_service.TaskNotFoundError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
     return Task(**row)
+
+@router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_task(task_id: int) -> None:
+    try:
+        tasks_service.delete_task(task_id)
+    except tasks_service.TaskNotFoundError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Task not found",
+        )

@@ -84,3 +84,10 @@ def complete_task(task_id: int) -> dict:
             row = conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
 
         return dict(row)
+
+def delete_task(task_id: int) -> bool:
+    with get_connection() as conn:
+        row = conn.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+        if row.rowcount == 0:
+            raise TaskNotFoundError(task_id)
+        conn.commit()
