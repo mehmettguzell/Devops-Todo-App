@@ -1,8 +1,7 @@
 [project]
 name = "todo-api"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
+description = "Bitir backend API"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi[standard]>=0.139.0",
