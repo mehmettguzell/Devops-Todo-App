@@ -25,7 +25,7 @@ description: "Task list for feature implementation"
 
 **Purpose**: Establish the new daily-capacity module per plan.md. No new dependencies or scaffolding beyond this file — the existing frontend project (001-003) already provides everything else.
 
-- [ ] T001 Create `frontend/src/lib/dailyCapacity.ts` with an exported `DailyHistoryDay` type (`{ dateKey: string; completedCount: number; completedMinutes: number }`) per data-model.md
+- [X] T001 Create `frontend/src/lib/dailyCapacity.ts` with an exported `DailyHistoryDay` type (`{ dateKey: string; completedCount: number; completedMinutes: number }`) per data-model.md
 
 **Checkpoint**: The daily-capacity module exists as an empty shell ready for logic.
 
@@ -37,8 +37,8 @@ description: "Task list for feature implementation"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T002 [P] Implement `todayKey()` and `toLocalDateKey(isoString)` in `frontend/src/lib/dailyCapacity.ts`: both return `YYYY-MM-DD` keys derived from the browser's local timezone (not UTC), per research.md R3 (depends on T001)
-- [ ] T003 [P] Implement `sumDurationMinutes(tasks: Task[])` in `frontend/src/lib/dailyCapacity.ts`: sums `estimated_duration_minutes` over the given tasks (depends on T001)
+- [X] T002 [P] Implement `todayKey()` and `toLocalDateKey(isoString)` in `frontend/src/lib/dailyCapacity.ts`: both return `YYYY-MM-DD` keys derived from the browser's local timezone (not UTC), per research.md R3 (depends on T001)
+- [X] T003 [P] Implement `sumDurationMinutes(tasks: Task[])` in `frontend/src/lib/dailyCapacity.ts`: sums `estimated_duration_minutes` over the given tasks (depends on T001)
 
 **Checkpoint**: Local-date and summation primitives exist and are ready for story-specific functions.
 
@@ -52,9 +52,9 @@ description: "Task list for feature implementation"
 
 ### Implementation for User Story 1
 
-- [ ] T004 [US1] Implement `getStoredBudgetMinutes(dateKey)` and `setStoredBudgetMinutes(dateKey, minutes)` in `frontend/src/lib/dailyCapacity.ts`, persisting to `localStorage` under a key scoped to `dateKey` (depends on T002)
-- [ ] T005 [US1] Implement `DailyCapacityPanel.tsx` in `frontend/src/components/`: accepts the current budget (or `null`) and an `onBudgetSet` callback; when unset, renders a simple form (hours/minutes-friendly input) that converts to minutes and calls `onBudgetSet` on submit, per FR-001/FR-002
-- [ ] T006 [US1] Wire `DailyCapacityPanel` (T005) into `frontend/src/App.tsx`: add `budgetMinutes` state initialized from `getStoredBudgetMinutes(todayKey())` (T004) on mount, render the panel above the recommendation area on the Active view, and call `setStoredBudgetMinutes` (T004) plus update state in the `onBudgetSet` handler (depends on T004, T005)
+- [X] T004 [US1] Implement `getStoredBudgetMinutes(dateKey)` and `setStoredBudgetMinutes(dateKey, minutes)` in `frontend/src/lib/dailyCapacity.ts`, persisting to `localStorage` under a key scoped to `dateKey` (depends on T002)
+- [X] T005 [US1] Implement `DailyCapacityPanel.tsx` in `frontend/src/components/`: accepts the current budget (or `null`) and an `onBudgetSet` callback; when unset, renders a simple form (hours/minutes-friendly input) that converts to minutes and calls `onBudgetSet` on submit, per FR-001/FR-002
+- [X] T006 [US1] Wire `DailyCapacityPanel` (T005) into `frontend/src/App.tsx`: add `budgetMinutes` state initialized from `getStoredBudgetMinutes(todayKey())` (T004) on mount, render the panel above the recommendation area on the Active view, and call `setStoredBudgetMinutes` (T004) plus update state in the `onBudgetSet` handler (depends on T004, T005)
 
 **Checkpoint**: Setting today's budget works and survives a reload without re-prompting.
 
@@ -68,10 +68,10 @@ description: "Task list for feature implementation"
 
 ### Implementation for User Story 2
 
-- [ ] T007 [US2] Implement `remainingCapacityMinutes(budgetMinutes, completedTodayMinutes)` in `frontend/src/lib/dailyCapacity.ts`: returns `Math.max(0, budgetMinutes - completedTodayMinutes)`, per FR-008 (depends on T003)
-- [ ] T008 [US2] In `frontend/src/App.tsx`, compute `completedTodayMinutes` via `sumDurationMinutes` (T003) over `completedTasks` filtered to `toLocalDateKey(task.completed_at) === todayKey()` (T002), and `remainingMinutes` via `remainingCapacityMinutes` (T007) (depends on T002, T003, T007)
-- [ ] T009 [US2] Extend `DailyCapacityPanel.tsx` (T005) to display the remaining-capacity line (e.g., "3 saatten 1 saat 20 dakikan kaldı") whenever a budget is set, receiving `remainingMinutes`/`budgetMinutes` as props (depends on T005, T008)
-- [ ] T010 [US2] In `frontend/src/App.tsx`, whenever a budget is set, cap the `minutes` value passed into `pickRecommendation` (`frontend/src/lib/recommendation.ts`, unchanged) to `Math.min(enteredMinutes, remainingMinutes)` before calling it, per research.md R2 / FR-009 (depends on T008)
+- [X] T007 [US2] Implement `remainingCapacityMinutes(budgetMinutes, completedTodayMinutes)` in `frontend/src/lib/dailyCapacity.ts`: returns `Math.max(0, budgetMinutes - completedTodayMinutes)`, per FR-008 (depends on T003)
+- [X] T008 [US2] In `frontend/src/App.tsx`, compute `completedTodayMinutes` via `sumDurationMinutes` (T003) over `completedTasks` filtered to `toLocalDateKey(task.completed_at) === todayKey()` (T002), and `remainingMinutes` via `remainingCapacityMinutes` (T007) (depends on T002, T003, T007)
+- [X] T009 [US2] Extend `DailyCapacityPanel.tsx` (T005) to display the remaining-capacity line (e.g., "3 saatten 1 saat 20 dakikan kaldı") whenever a budget is set, receiving `remainingMinutes`/`budgetMinutes` as props (depends on T005, T008)
+- [X] T010 [US2] In `frontend/src/App.tsx`, whenever a budget is set, cap the `minutes` value passed into `pickRecommendation` (`frontend/src/lib/recommendation.ts`, unchanged) to `Math.min(enteredMinutes, remainingMinutes)` before calling it, per research.md R2 / FR-009 (depends on T008)
 
 **Checkpoint**: Remaining capacity is shown accurately and the recommendation engine respects it. Combined with US1, the day's realistic ceiling is both set and tracked live.
 
@@ -85,8 +85,8 @@ description: "Task list for feature implementation"
 
 ### Implementation for User Story 3
 
-- [ ] T011 [US3] In `frontend/src/App.tsx`, compute `plannedMinutes` via `sumDurationMinutes` (T003) over `activeTasks`, and `isOverPlanned = budgetMinutes !== null && plannedMinutes > budgetMinutes`, re-evaluated on every render so it stays live per FR-006 (depends on T003)
-- [ ] T012 [US3] Extend `DailyCapacityPanel.tsx` (T009) to render a calm, non-blocking advisory message (e.g., "bugün için planladığın işler ayırdığın zamanın iki katı — bir kısmını yarına bırakmak ister misin?") when `isOverPlanned` is true (prop from T011), styled consistently with the existing empty-state/advisory text and never disabling any other control in the app, per FR-005 (depends on T009, T011)
+- [X] T011 [US3] In `frontend/src/App.tsx`, compute `plannedMinutes` via `sumDurationMinutes` (T003) over `activeTasks`, and `isOverPlanned = budgetMinutes !== null && plannedMinutes > budgetMinutes`, re-evaluated on every render so it stays live per FR-006 (depends on T003)
+- [X] T012 [US3] Extend `DailyCapacityPanel.tsx` (T009) to render a calm, non-blocking advisory message (e.g., "bugün için planladığın işler ayırdığın zamanın iki katı — bir kısmını yarına bırakmak ister misin?") when `isOverPlanned` is true (prop from T011), styled consistently with the existing empty-state/advisory text and never disabling any other control in the app, per FR-005 (depends on T009, T011)
 
 **Checkpoint**: Over-planning produces a calm, live-updating nudge that never blocks other actions. US1+US2+US3 together deliver the full realistic-capacity loop.
 
@@ -100,8 +100,8 @@ description: "Task list for feature implementation"
 
 ### Implementation for User Story 4
 
-- [ ] T013 [US4] Implement `ProgressPanel.tsx` in `frontend/src/components/`: accepts `completedTasks`, filters to today via `toLocalDateKey`/`todayKey` (T002) and sums via `sumDurationMinutes` (T003) to get today's completed count and minutes, and renders either a celebratory summary (count + time) or a calm zero-state message when the count is zero — with no reference to active/faded/archived tasks anywhere in the component, per FR-010/FR-011/FR-012 (depends on T002, T003)
-- [ ] T014 [US4] Wire `ProgressPanel` (T013) into `frontend/src/App.tsx`, rendering it on the Active view alongside `DailyCapacityPanel` (depends on T013)
+- [X] T013 [US4] Implement `ProgressPanel.tsx` in `frontend/src/components/`: accepts `completedTasks`, filters to today via `toLocalDateKey`/`todayKey` (T002) and sums via `sumDurationMinutes` (T003) to get today's completed count and minutes, and renders either a celebratory summary (count + time) or a calm zero-state message when the count is zero — with no reference to active/faded/archived tasks anywhere in the component, per FR-010/FR-011/FR-012 (depends on T002, T003)
+- [X] T014 [US4] Wire `ProgressPanel` (T013) into `frontend/src/App.tsx`, rendering it on the Active view alongside `DailyCapacityPanel` (depends on T013)
 
 **Checkpoint**: Completing tasks produces visible, positive same-day feedback with zero mention of unfinished work. US1-US4 together deliver realistic planning plus finish-first feedback within a single day.
 
@@ -115,9 +115,9 @@ description: "Task list for feature implementation"
 
 ### Implementation for User Story 5
 
-- [ ] T015 [US5] Implement `buildHistory(completedTasks: Task[], days = 7)` in `frontend/src/lib/dailyCapacity.ts`: buckets `completedTasks` by `toLocalDateKey(task.completed_at)` (T002) into an array of `DailyHistoryDay` (T001) covering the most recent `days` local calendar days (today inclusive), including zero-completion days, per FR-013 (depends on T001, T002)
-- [ ] T016 [US5] Implement `computeStreak(history: DailyHistoryDay[])` in `frontend/src/lib/dailyCapacity.ts`: walks backward from today (or from yesterday if today's entry has zero completions) counting consecutive days with `completedCount >= 1`, stopping at the first zero-completion day, per FR-014 (depends on T015)
-- [ ] T017 [US5] Extend `ProgressPanel.tsx` (T013) to render the last 7 days from `buildHistory` (T015) — zero-completion days shown as a quiet, neutral gap, never negatively framed — and the current streak from `computeStreak` (T016), stated plainly with no blaming language on reset, per FR-013/FR-014 and the streak-reset Edge Case (depends on T013, T015, T016)
+- [X] T015 [US5] Implement `buildHistory(completedTasks: Task[], days = 7)` in `frontend/src/lib/dailyCapacity.ts`: buckets `completedTasks` by `toLocalDateKey(task.completed_at)` (T002) into an array of `DailyHistoryDay` (T001) covering the most recent `days` local calendar days (today inclusive), including zero-completion days, per FR-013 (depends on T001, T002)
+- [X] T016 [US5] Implement `computeStreak(history: DailyHistoryDay[])` in `frontend/src/lib/dailyCapacity.ts`: walks backward from today (or from yesterday if today's entry has zero completions) counting consecutive days with `completedCount >= 1`, stopping at the first zero-completion day, per FR-014 (depends on T015)
+- [X] T017 [US5] Extend `ProgressPanel.tsx` (T013) to render the last 7 days from `buildHistory` (T015) — zero-completion days shown as a quiet, neutral gap, never negatively framed — and the current streak from `computeStreak` (T016), stated plainly with no blaming language on reset, per FR-013/FR-014 and the streak-reset Edge Case (depends on T013, T015, T016)
 
 **Checkpoint**: All five user stories work together — a realistic daily budget, honest remaining capacity that the recommendation engine respects, a calm over-budget nudge, and a completion-only progress story spanning both today and the last week.
 
@@ -127,7 +127,7 @@ description: "Task list for feature implementation"
 
 **Purpose**: Repository-wide consistency once all stories are complete.
 
-- [ ] T018 [P] Update `README.md` with a brief note on setting a daily budget and reading the progress panel, per constitution Principle XII (Concise Documentation)
+- [X] T018 [P] Update `README.md` with a brief note on setting a daily budget and reading the progress panel, per constitution Principle XII (Concise Documentation)
 - [ ] T019 Run through every scenario in `specs/004-daily-capacity-progress/quickstart.md` end-to-end (using the `sqlite3` backdating steps for the history scenario) and fix any discrepancies found
 
 ---

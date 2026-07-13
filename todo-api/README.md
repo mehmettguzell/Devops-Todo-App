@@ -11,6 +11,13 @@ task in one click, pin a task exempt from fading, or give it a due date to prote
 until that date passes. The fade/archive pace (defaults: 7 days to fade, 21 to archive) is
 adjustable from the Settings button in the header.
 
+On the Active view, enter today's time budget once (e.g. "1 hour 30 minutes") and Bitir tracks
+remaining capacity as you complete tasks, nudging you calmly (never blocking) if today's planned
+work adds up to more than you budgeted. A progress panel always shows what you've finished today
+plus the last 7 days of completions and your current finishing streak — it never mentions
+unfinished work. The budget resets automatically each new day and lives only in your browser
+(`localStorage`), so it needs no backend changes.
+
 ## Prerequisites
 
 - Python 3.13+ with [uv](https://docs.astral.sh/uv/)
