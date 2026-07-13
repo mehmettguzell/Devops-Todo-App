@@ -1,5 +1,5 @@
 export type EnergyLevel = "low" | "medium" | "high";
-export type TaskStatus = "active" | "completed";
+export type TaskStatus = "active" | "faded" | "archived" | "completed";
 
 export interface Task {
   id: number;
@@ -9,6 +9,9 @@ export interface Task {
   status: TaskStatus;
   created_at: string;
   completed_at: string | null;
+  last_touched_at: string;
+  fading_exempt: boolean;
+  due_date: string | null;
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
@@ -48,6 +51,7 @@ export interface TaskCreateInput {
   title: string;
   estimated_duration_minutes: number;
   energy_level: EnergyLevel;
+  due_date?: string | null;
 }
 
 export function createTask(input: TaskCreateInput): Promise<Task> {
@@ -63,4 +67,20 @@ export function listTasks(taskStatus: TaskStatus): Promise<Task[]> {
 
 export function completeTask(taskId: number): Promise<Task> {
   return request<Task>(`/tasks/${taskId}/complete`, { method: "PATCH" });
+}
+
+export function reviveTask(taskId: number): Promise<Task> {
+  return request<Task>(`/tasks/${taskId}/revive`, { method: "PATCH" });
+}
+
+export interface TaskFadingUpdateInput {
+  fading_exempt?: boolean;
+  due_date?: string | null;
+}
+
+export function updateTaskFading(taskId: number, input: TaskFadingUpdateInput): Promise<Task> {
+  return request<Task>(`/tasks/${taskId}/fading`, {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  });
 }

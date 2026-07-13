@@ -1,0 +1,79 @@
+openapi: 3.0.3
+info:
+  title: Bitir Fading Settings API
+  version: "0.1.0"
+  description: >
+    REST contract for the global fade/archive threshold configuration (feature 003,
+    User Story 6). Single-user, no authentication.
+paths:
+  /settings/fading:
+    get:
+      summary: Get the current fade/archive thresholds
+      responses:
+        "200":
+          description: Current fading settings (defaults if never changed).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FadingSettings"
+    put:
+      summary: Update the fade/archive thresholds
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FadingSettingsUpdate"
+      responses:
+        "200":
+          description: Updated fading settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FadingSettings"
+        "422":
+          description: >
+            Validation failed — non-positive threshold, or archive_threshold_days is not
+            strictly greater than fade_threshold_days (FR-017).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+components:
+  schemas:
+    FadingSettings:
+      type: object
+      required: [fade_threshold_days, archive_threshold_days]
+      properties:
+        fade_threshold_days:
+          type: integer
+          minimum: 1
+          default: 7
+        archive_threshold_days:
+          type: integer
+          minimum: 1
+          default: 21
+    FadingSettingsUpdate:
+      type: object
+      required: [fade_threshold_days, archive_threshold_days]
+      properties:
+        fade_threshold_days:
+          type: integer
+          minimum: 1
+        archive_threshold_days:
+          type: integer
+          minimum: 1
+    ValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            type: object
+            properties:
+              loc:
+                type: array
+                items:
+                  type: string
+              msg:
+                type: string

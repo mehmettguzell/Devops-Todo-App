@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from db import init_db
+from routes.settings import router as settings_router
 from routes.tasks import router as tasks_router
 
 CORS_ALLOWED_ORIGIN = os.environ.get("CORS_ALLOWED_ORIGIN", "http://localhost:5173")
@@ -26,3 +27,4 @@ app.add_middleware(
 )
 
 app.include_router(tasks_router)
+app.include_router(settings_router)

@@ -1,9 +1,15 @@
 # Bitir
 
-A task manager focused on finishing work, not hoarding it. This is the active-task-list skeleton:
-capture a task, see only what's active, mark it done, and review what you've finished. The active
-view also includes a single-task recommendation area: enter your available time and current energy
-to get one matching task at a time, with options to complete it, ask for another, or dismiss it.
+A task manager focused on finishing work, not hoarding it. Capture a task, see only what's active,
+mark it done, and review what you've finished. The active view also includes a single-task
+recommendation area: enter your available time and current energy to get one matching task at a
+time, with options to complete it, ask for another, or dismiss it.
+
+Tasks that go untouched quietly fade (muted styling, lower priority in the list and in
+recommendations) and, left untouched longer, move to a separate Archive view. Fade and archive any
+task in one click, pin a task exempt from fading, or give it a due date to protect it automatically
+until that date passes. The fade/archive pace (defaults: 7 days to fade, 21 to archive) is
+adjustable from the Settings button in the header.
 
 ## Prerequisites
 
@@ -46,10 +52,16 @@ Open the URL Vite prints (typically `http://localhost:5173`).
 
 ## Using the API
 
-- `GET /tasks?status=active|completed` — list tasks (defaults to `active`)
-- `POST /tasks` — create a task (`title`, `estimated_duration_minutes`, `energy_level`: `low`/`medium`/`high`)
-- `PATCH /tasks/{task_id}/complete` — mark a task completed (idempotent)
+- `GET /tasks?status=active|completed|archived` — list tasks (defaults to `active`; `active` includes
+  faded tasks, ordered after fresh ones)
+- `POST /tasks` — create a task (`title`, `estimated_duration_minutes`, `energy_level`:
+  `low`/`medium`/`high`, optional `due_date`)
+- `PATCH /tasks/{task_id}/complete` — mark a task completed (idempotent; 409 if archived)
+- `PATCH /tasks/{task_id}/revive` — bring a faded or archived task back to fresh/active
+- `PATCH /tasks/{task_id}/fading` — set a task's `fading_exempt` flag and/or `due_date`
+- `GET /settings/fading` / `PUT /settings/fading` — read/update the fade and archive thresholds (days)
 
-Full contract: [`specs/001-bitir-task-skeleton/contracts/tasks-api.yaml`](specs/001-bitir-task-skeleton/contracts/tasks-api.yaml).
+Full contracts: [`specs/003-task-fading/contracts/tasks-api.yaml`](specs/003-task-fading/contracts/tasks-api.yaml),
+[`specs/003-task-fading/contracts/settings-api.yaml`](specs/003-task-fading/contracts/settings-api.yaml).
 
 Interactive docs are available at `http://localhost:8000/docs` while the backend is running.

@@ -46,6 +46,12 @@ body {
   margin: 0;
 }
 
+.page-header__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
 .view-nav {
   display: flex;
   gap: var(--space-1);
@@ -113,6 +119,15 @@ body {
   font-size: 0.9rem;
 }
 
+.task-list-item--faded {
+  opacity: 0.55;
+}
+
+.task-list-item--faded .task-list-item__title {
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
 .task-list-item__complete {
   border: 1px solid var(--color-border);
   background: var(--color-surface);
@@ -120,6 +135,39 @@ body {
   width: 2rem;
   height: 2rem;
   cursor: pointer;
+}
+
+.task-list-item__revive {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.task-list-item__pin {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: 999px;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  opacity: 0.45;
+}
+
+.task-list-item__pin--active {
+  opacity: 1;
+  border-color: var(--color-accent);
+}
+
+.task-list-item__due-date {
+  font-size: 0.85rem;
+  padding: 0.2rem var(--space-1);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text-muted);
+  max-width: 9.5rem;
 }
 
 .empty-state {

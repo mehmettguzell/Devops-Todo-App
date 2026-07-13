@@ -11,6 +11,7 @@ function AddTaskModal({ onClose, onCreated }: AddTaskModalProps) {
   const [title, setTitle] = useState("");
   const [duration, setDuration] = useState("");
   const [energyLevel, setEnergyLevel] = useState<EnergyLevel | "">("");
+  const [dueDate, setDueDate] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
 
@@ -39,6 +40,7 @@ function AddTaskModal({ onClose, onCreated }: AddTaskModalProps) {
         title: title.trim(),
         estimated_duration_minutes: Number(duration),
         energy_level: energyLevel as EnergyLevel,
+        due_date: dueDate || null,
       });
       onCreated(task);
       onClose();
@@ -101,6 +103,15 @@ function AddTaskModal({ onClose, onCreated }: AddTaskModalProps) {
             <option value="high">High</option>
           </select>
           {fieldErrors.energy_level && <span className="field-error">{fieldErrors.energy_level}</span>}
+        </label>
+
+        <label>
+          Due date (optional)
+          <input
+            type="date"
+            value={dueDate}
+            onChange={(event) => setDueDate(event.target.value)}
+          />
         </label>
 
         {fieldErrors.form && <span className="field-error">{fieldErrors.form}</span>}
