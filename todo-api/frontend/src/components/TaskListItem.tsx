@@ -6,6 +6,7 @@ interface TaskListItemProps {
   onRevive?: (taskId: number) => void;
   onToggleExempt?: (taskId: number, exempt: boolean) => void;
   onSetDueDate?: (taskId: number, dueDate: string | null) => void;
+  onDelete?: (taskId: number) => void;
 }
 
 function TaskListItem({
@@ -14,6 +15,7 @@ function TaskListItem({
   onRevive,
   onToggleExempt,
   onSetDueDate,
+  onDelete,
 }: TaskListItemProps) {
   const className =
     task.status === "faded" ? "task-list-item task-list-item--faded" : "task-list-item";
@@ -74,6 +76,20 @@ function TaskListItem({
           value={task.due_date ?? ""}
           onChange={(event) => onSetDueDate(task.id, event.target.value || null)}
         />
+      )}
+      {onDelete && (
+        <button
+          type="button"
+          className="task-list-item__delete"
+          aria-label={`Delete "${task.title}"`}
+          onClick={() => {
+            if (window.confirm(`Delete "${task.title}"? This can't be undone.`)) {
+              onDelete(task.id);
+            }
+          }}
+        >
+          Delete
+        </button>
       )}
     </li>
   );
