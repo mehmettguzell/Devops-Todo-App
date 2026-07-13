@@ -8,9 +8,9 @@ interface ProgressPanelProps {
 function formatMinutes(minutes: number): string {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  if (hours === 0) return `${mins} dakika`;
-  if (mins === 0) return `${hours} saat`;
-  return `${hours} saat ${mins} dakika`;
+  if (hours === 0) return `${mins} min`;
+  if (mins === 0) return `${hours} h`;
+  return `${hours} h ${mins} min`;
 }
 
 function ProgressPanel({ completedTasks }: ProgressPanelProps) {
@@ -28,12 +28,12 @@ function ProgressPanel({ completedTasks }: ProgressPanelProps) {
     <div className="progress-panel">
       {completedCountToday === 0 ? (
         <p className="progress-panel__empty">
-          Henüz bugün bir şey bitirmedin — ilk işini tamamladığında burada göreceksin.
+          Nothing finished yet today — it'll show up here as soon as you complete your first task.
         </p>
       ) : (
         <p className="progress-panel__summary">
-          Bugün {completedCountToday} iş bitirdin — {formatMinutes(completedMinutesToday)}
-          {"'"}lık iş tamamladın.
+          You've finished {completedCountToday} {completedCountToday === 1 ? "task" : "tasks"}
+          today — {formatMinutes(completedMinutesToday)} worth of work done.
         </p>
       )}
 
@@ -55,8 +55,8 @@ function ProgressPanel({ completedTasks }: ProgressPanelProps) {
 
       <p className="progress-panel__streak">
         {streak > 0
-          ? `${streak} gündür ardışık bitiriyorsun.`
-          : "Seri şu an sıfırda — yeni bir tanesine bugün başlayabilirsin."}
+          ? `${streak}-day finishing streak.`
+          : "Streak is at zero right now — you can start a new one today."}
       </p>
     </div>
   );

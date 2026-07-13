@@ -11,9 +11,9 @@ interface DailyCapacityPanelProps {
 function formatMinutes(minutes: number): string {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  if (hours === 0) return `${mins} dakika`;
-  if (mins === 0) return `${hours} saat`;
-  return `${hours} saat ${mins} dakika`;
+  if (hours === 0) return `${mins} min`;
+  if (mins === 0) return `${hours} h`;
+  return `${hours} h ${mins} min`;
 }
 
 function DailyCapacityPanel({
@@ -55,11 +55,11 @@ function DailyCapacityPanel({
     return (
       <form className="daily-capacity-panel" onSubmit={handleSubmit} noValidate>
         <p className="daily-capacity-panel__prompt">
-          Bugün işlere ne kadar zaman ayırabilirsin?
+          How much time can you realistically give to tasks today?
         </p>
         <div className="daily-capacity-panel__fields">
           <div className="daily-capacity-panel__field">
-            <label htmlFor="daily-budget-hours">Saat</label>
+            <label htmlFor="daily-budget-hours">Hours</label>
             <input
               id="daily-budget-hours"
               type="number"
@@ -70,7 +70,7 @@ function DailyCapacityPanel({
             />
           </div>
           <div className="daily-capacity-panel__field">
-            <label htmlFor="daily-budget-minutes">Dakika</label>
+            <label htmlFor="daily-budget-minutes">Minutes</label>
             <input
               id="daily-budget-minutes"
               type="number"
@@ -83,7 +83,7 @@ function DailyCapacityPanel({
         </div>
         {error && <p className="daily-capacity-panel__error">{error}</p>}
         <button type="submit" className="daily-capacity-panel__submit">
-          Bugünün bütçesini belirle
+          Set today's budget
         </button>
       </form>
     );
@@ -92,12 +92,12 @@ function DailyCapacityPanel({
   return (
     <div className="daily-capacity-panel">
       <p className="daily-capacity-panel__remaining">
-        {formatMinutes(budgetMinutes)} bütçenden {formatMinutes(remainingMinutes)} kaldı.
+        {formatMinutes(remainingMinutes)} left out of your {formatMinutes(budgetMinutes)} budget.
       </p>
       {isOverPlanned && (
         <p className="daily-capacity-panel__nudge">
-          Bugün için planladığın işler ayırdığın zamandan fazla — bir kısmını yarına bırakmak
-          ister misin?
+          Today's planned work adds up to more than you budgeted — maybe let some of it wait
+          until tomorrow?
         </p>
       )}
     </div>
