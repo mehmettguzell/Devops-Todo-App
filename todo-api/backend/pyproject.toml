@@ -7,3 +7,12 @@ dependencies = [
     "fastapi[standard]>=0.139.0",
     "psycopg[binary]>=3.2",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
