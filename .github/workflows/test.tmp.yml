@@ -1,0 +1,66 @@
+name: test tmp
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  changes:
+    runs-on: ubuntu-22.04
+    outputs:
+      backend: ${{steps.changes.outputs.backend}}
+      frontend: ${{steps.changes.outputs.frontend}}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: is changed
+        id: changes
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
+        with:
+          filters: |
+            backend:
+              - "todo-api/backend/**"
+            frontend:
+              - "todo-api/frontend/**"
+
+  backend-tests:
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-22.04
+
+    services:
+      database:
+        image: postgres:15
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: todo-api/backend
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+
+      - name: Install python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "todo-api/.python-version"
+
+      - name: run tests
+        run: uv run pytest -v

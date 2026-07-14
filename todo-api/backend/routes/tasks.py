@@ -125,3 +125,7 @@ def delete_task(task_id: int) -> None:
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Task not found",
         )
+
+@router.get("/test", response_model=list[Task])
+def test(task_id: int) -> None:
+    return None
