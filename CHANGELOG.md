@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/mehmettguzell/Devops-Todo-App/compare/v0.4.0...v0.5.0) (2026-07-16)
+
+
+### Features
+
+* add test endpoint ([e8e5404](https://github.com/mehmettguzell/Devops-Todo-App/commit/e8e540452be4fc4141e5314817eb051d16a5ef07))
+
 ## [0.4.0](https://github.com/mehmettguzell/Devops-Todo-App/compare/v0.3.0...v0.4.0) (2026-07-13)
 
 
