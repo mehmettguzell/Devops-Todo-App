@@ -38,8 +38,7 @@ services:
 
   backend:
     container_name: todo-backend
-    build:
-      context: ../backend
+    image: ghcr.io/mehmettguzell/devops-todo-app/backend:${IMAGE_TAG:-latest}
     ports:
       - "8000:8000"
     networks:
@@ -70,10 +69,7 @@ services:
 
   frontend:
     container_name: todo-frontend
-    build:
-      context: ../frontend
-      args:
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+    image: ghcr.io/mehmettguzell/devops-todo-app/frontend:${IMAGE_TAG:-latest}
     ports:
       - "80:80"
     networks:
