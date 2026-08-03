@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0](https://github.com/mehmettguzell/Devops-Todo-App/compare/v0.5.0...v0.6.0) (2026-08-03)
+
+
+### Features
+
+* add CD pipeline to deploy to EC2 via SSM ([237e46d](https://github.com/mehmettguzell/Devops-Todo-App/commit/237e46d672b54f2b7a9b93beeb17ab0d249684f8))
+
+
+### Bug Fixes
+
+* stop tracking docker/.env, add .env.example instead ([d31405e](https://github.com/mehmettguzell/Devops-Todo-App/commit/d31405e850ea12d5fdc9c298ddd62ef7cf51df04))
+
 ## [0.5.0](https://github.com/mehmettguzell/Devops-Todo-App/compare/v0.4.0...v0.5.0) (2026-07-16)
 
 
