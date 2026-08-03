@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/mehmettguzell/Devops-Todo-App/compare/v0.6.2...v0.7.0) (2026-08-03)
+
+
+### Features
+
+* fetch .env from SSM Parameter Store on every deploy ([342a253](https://github.com/mehmettguzell/Devops-Todo-App/commit/342a253ab83aae87069000e9b7da35e4a6e8a727))
+
 ## [0.6.2](https://github.com/mehmettguzell/Devops-Todo-App/compare/v0.6.1...v0.6.2) (2026-08-03)
 
 
