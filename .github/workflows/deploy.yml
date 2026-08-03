@@ -42,8 +42,10 @@ jobs:
           # which would otherwise report SSM/Actions status as Success either way.
           #
           # docker-compose.yml is rewritten from the repo on every run so the server
-          # self-heals if /opt/todo-app is ever lost; .env holds real DB credentials
-          # and is deliberately NOT managed here — it's a one-time manual bootstrap.
+          # self-heals if /opt/todo-app is ever lost. .env holds real DB credentials,
+          # so instead of being embedded here it's fetched by the *server's own* IAM
+          # role from SSM Parameter Store (/todo-app/env-file, SecureString) — the
+          # value never passes through this GitHub Actions run at all.
           compose_b64=$(base64 -w0 todo-api/docker/docker-compose.yml)
 
           params=$(jq -n --arg compose "$compose_b64" '{
@@ -51,6 +53,8 @@ jobs:
               "set -e",
               "mkdir -p /opt/todo-app",
               ("echo " + $compose + " | base64 -d > /opt/todo-app/docker-compose.yml"),
+              "aws ssm get-parameter --name /todo-app/env-file --with-decryption --region eu-north-1 --query Parameter.Value --output text > /opt/todo-app/.env",
+              "chmod 600 /opt/todo-app/.env",
               "cd /opt/todo-app",
               "docker compose pull",
               "docker compose up -d --remove-orphans",
