@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/mehmettguzell/Devops-Todo-App/compare/v0.7.0...v0.7.1) (2026-08-03)
+
+
+### Bug Fixes
+
+* run deploy job on manual workflow_dispatch too ([555f6f7](https://github.com/mehmettguzell/Devops-Todo-App/commit/555f6f7288328d05d6c0fc17c261043bf21c8b12))
+
 ## [0.6.2](https://github.com/mehmettguzell/Devops-Todo-App/compare/v0.6.1...v0.6.2) (2026-08-03)
 
 
