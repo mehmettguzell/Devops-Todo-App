@@ -7,7 +7,12 @@ interface RecommendationCardProps {
   onDismiss: () => void;
 }
 
-function RecommendationCard({ task, onComplete, onNotNow, onDismiss }: RecommendationCardProps) {
+function RecommendationCard({
+  task,
+  onComplete,
+  onNotNow,
+  onDismiss,
+}: RecommendationCardProps) {
   return (
     <div className="recommendation-card">
       <div className="recommendation-card__title">{task.title}</div>
@@ -19,7 +24,7 @@ function RecommendationCard({ task, onComplete, onNotNow, onDismiss }: Recommend
           Complete
         </button>
         <button type="button" onClick={() => onNotNow(task.id)}>
-          Not now
+          Not now..
         </button>
         <button type="button" onClick={onDismiss}>
           Dismiss
