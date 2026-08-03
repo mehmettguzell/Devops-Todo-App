@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.2](https://github.com/mehmettguzell/Devops-Todo-App/compare/v0.6.1...v0.6.2) (2026-08-03)
+
+
+### Bug Fixes
+
+* rewrite docker-compose.yml on every deploy for self-healing ([7b0101a](https://github.com/mehmettguzell/Devops-Todo-App/commit/7b0101a6d44c327609284ce39f24aa2c0ea323d6))
+
 ## [0.6.1](https://github.com/mehmettguzell/Devops-Todo-App/compare/v0.6.0...v0.6.1) (2026-08-03)
 
 
