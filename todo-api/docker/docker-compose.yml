@@ -38,7 +38,7 @@ services:
 
   backend:
     container_name: todo-backend
-    image: ghcr.io/mehmettguzell/devops-todo-app/backend:${IMAGE_TAG:-latest}
+    image: ghcr.io/mehmettguzell/devops-todo-app/backend:latest
     ports:
       - "8000:8000"
     networks:
@@ -69,7 +69,7 @@ services:
 
   frontend:
     container_name: todo-frontend
-    image: ghcr.io/mehmettguzell/devops-todo-app/frontend:${IMAGE_TAG:-latest}
+    image: ghcr.io/mehmettguzell/devops-todo-app/frontend:latest
     ports:
       - "80:80"
     networks:

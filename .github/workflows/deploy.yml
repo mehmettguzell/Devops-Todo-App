@@ -29,15 +29,17 @@ jobs:
       - name: deploy via SSM
         env:
           INSTANCE_ID: ${{ vars.EC2_INSTANCE_ID }}
-          IMAGE_TAG: ${{ github.event.workflow_run.head_branch }}
         run: |
-          IMAGE_TAG="${IMAGE_TAG:-latest}"
-          echo "Deploying image tag: $IMAGE_TAG"
-
-          params=$(jq -n --arg tag "$IMAGE_TAG" '{
+          # build-push.yml only rebuilds an image (and its `latest` tag) when that
+          # service actually changed, so backend/frontend don't share one version in
+          # lockstep — `latest` is the only tag guaranteed to exist for whichever
+          # service(s) this run touched. `set -e` ensures a failed pull/up aborts the
+          # script instead of falling through to the harmless final prune command,
+          # which would otherwise report SSM/Actions status as Success either way.
+          params=$(jq -n '{
             commands: [
+              "set -e",
               "cd /opt/todo-app",
-              ("export IMAGE_TAG=" + $tag),
               "docker compose pull",
               "docker compose up -d --remove-orphans",
               "docker image prune -f"
@@ -48,7 +50,7 @@ jobs:
             --instance-ids "$INSTANCE_ID" \
             --document-name "AWS-RunShellScript" \
             --parameters "$params" \
-            --comment "Deploy $IMAGE_TAG" \
+            --comment "Deploy ${{ github.event.workflow_run.head_branch }}" \
             --query "Command.CommandId" --output text)
 
           echo "SSM command id: $command_id"
