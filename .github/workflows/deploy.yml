@@ -20,6 +20,10 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
         with:
@@ -36,9 +40,17 @@ jobs:
           # service(s) this run touched. `set -e` ensures a failed pull/up aborts the
           # script instead of falling through to the harmless final prune command,
           # which would otherwise report SSM/Actions status as Success either way.
-          params=$(jq -n '{
+          #
+          # docker-compose.yml is rewritten from the repo on every run so the server
+          # self-heals if /opt/todo-app is ever lost; .env holds real DB credentials
+          # and is deliberately NOT managed here — it's a one-time manual bootstrap.
+          compose_b64=$(base64 -w0 todo-api/docker/docker-compose.yml)
+
+          params=$(jq -n --arg compose "$compose_b64" '{
             commands: [
               "set -e",
+              "mkdir -p /opt/todo-app",
+              ("echo " + $compose + " | base64 -d > /opt/todo-app/docker-compose.yml"),
               "cd /opt/todo-app",
               "docker compose pull",
               "docker compose up -d --remove-orphans",
