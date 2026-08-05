@@ -24,9 +24,13 @@ services:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+    # Sema/tablolar backend acilirken init_db() ile olusturuluyor (main.py lifespan),
+    # bu yuzden docker-entrypoint-initdb.d'ye bir init.sql baglanmiyor. Repoda boyle
+    # bir dosya yok; bind mount edilseydi Docker onu bos bir DIZIN olarak yaratir,
+    # postgres entrypoint `psql -f .../init.sql` ile dizini okumaya calisip cikardi
+    # (bos volume'lu yeni sunucuda konteyner restart loop'una girer).
     volumes:
       - todo_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     restart: unless-stopped
     logging: *default-logging
     healthcheck:
