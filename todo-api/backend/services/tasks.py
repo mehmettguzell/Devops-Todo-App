@@ -151,3 +151,10 @@ def delete_task(task_id: int) -> bool:
         if cursor.rowcount == 0:
             raise TaskNotFoundError(task_id)
         conn.commit()
+
+def tmp_task(task_id: int) -> bool:
+    with get_connection() as conn:
+        cursor = conn.execute("DELETE FROM tasks WHERE id = %s", (task_id,))
+        if cursor.rowcount == 0:
+            raise TaskNotFoundError(task_id)
+        conn.commit()
