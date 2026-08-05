@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/mehmettguzell/Devops-Todo-App/compare/v0.7.1...v0.8.0) (2026-08-05)
+
+
+### Features
+
+* add method to git action test ([9197649](https://github.com/mehmettguzell/Devops-Todo-App/commit/9197649cf1b4699adc8670445b3175e12a25b97f))
+
 ## [0.7.1](https://github.com/mehmettguzell/Devops-Todo-App/compare/v0.7.0...v0.7.1) (2026-08-03)
 
 
